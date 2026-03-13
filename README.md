@@ -20,7 +20,7 @@ Simple frontend for Wikimedia projects
 
 
 ## Screenshots
-![Screenshot of Wikimore](./doc/screenshots/example.jpg)
+![Screenshot of Wikimore](./doc/screenshots/screenshot.png)
 
 ## 📦 Developer info
 
