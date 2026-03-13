@@ -1,0 +1,59 @@
+#!/bin/bash
+
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source /usr/share/yunohost/helpers
+
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Stopping $app's systemd service..."
+
+ynh_systemctl --service="$app" --action="stop"
+
+#=================================================
+# UPDATE A CONFIG FILE
+#=================================================
+ynh_script_progression "Updating $app's configuration files..."
+
+ynh_config_add --template=".env" --destination="$install_dir/.env"
+
+#=================================================
+# REAPPLY SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression "Upgrading system configurations related to $app..."
+
+ynh_config_add_nginx
+
+ynh_config_add_systemd
+
+yunohost service add "$app" --description="Frontend for Wikimedia projects" --log="/var/log/$app/$app.log"
+
+#=================================================
+# INSTALL PYTHON DEPENDENCIES
+#=================================================
+ynh_script_progression "Installing Python dependencies..."
+
+pushd $install_dir
+	ynh_safe_rm "$install_dir/venv"
+    python3 -m venv $install_dir/venv
+    ynh_hide_warnings $install_dir/venv/bin/pip install --upgrade pip 
+    ynh_hide_warnings $install_dir/venv/bin/pip install wikimore==$(ynh_app_upstream_version)
+popd
+
+chown -R $app:$app "$install_dir"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting $app's systemd service..."
+
+ynh_systemctl --service="$app" --action="start"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression "Upgrade of $app completed"
