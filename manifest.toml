@@ -39,6 +39,12 @@ ram.runtime = "50M"
 
 [resources]
 
+[resources.sources.main]
+    url = "https://git.private.coffee/privatecoffee/wikimore/archive/v0.1.27.tar.gz"
+    sha256 = "6fe9490f99d560cb989216dfc701708cce3ba911174dcb1809a75a687102cb99"
+    autoupdate.strategy = "latest_gitea_tag"
+    prefetch = false
+
     [resources.system_user]
 
     [resources.install_dir]
